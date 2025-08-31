@@ -638,21 +638,37 @@ const User = require("../models/User");
 
 const router = express.Router();
 
+// router.get("/my-proposals", auth, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.id).select("girlfriends");
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     // This now correctly returns the proposals for the logged-in user
+//     res.json({ girlfriends: user.girlfriends });
+//   } catch (err) {
+//     console.error("Error fetching user proposals:", err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
+
 router.get("/my-proposals", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("girlfriends");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    // This now correctly returns the proposals for the logged-in user
-    res.json({ girlfriends: user.girlfriends });
+    const user = await User.findById(req.user.id).select("username girlfriends");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const girlfriendsWithUsername = user.girlfriends.map(gf => ({
+      ...gf.toObject(),
+      username: user.username
+    }));
+
+    res.json({ girlfriends: girlfriendsWithUsername });
   } catch (err) {
     console.error("Error fetching user proposals:", err.message);
     res.status(500).send("Server Error");
   }
 });
-
-
 
 
 
