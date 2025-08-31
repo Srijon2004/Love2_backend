@@ -652,12 +652,12 @@ const router = express.Router();
 //   }
 // });
 
-
 router.get("/my-proposals", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("username girlfriends");
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Include username with each girlfriend
     const girlfriendsWithUsername = user.girlfriends.map(gf => ({
       ...gf.toObject(),
       username: user.username
@@ -665,10 +665,11 @@ router.get("/my-proposals", auth, async (req, res) => {
 
     res.json({ girlfriends: girlfriendsWithUsername });
   } catch (err) {
-    console.error("Error fetching user proposals:", err.message);
+    console.error(err.message);
     res.status(500).send("Server Error");
   }
 });
+
 
 
 
