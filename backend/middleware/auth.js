@@ -112,36 +112,70 @@
 
 
 
-// backend/middleware/auth.js
+// // backend/middleware/auth.js
+// const jwt = require("jsonwebtoken");
+
+// module.exports = function (req, res, next) {
+//   const token =
+//     req.cookies.token ||
+//     (req.headers.authorization && req.headers.authorization.split(" ")[1]);
+
+//   if (!token) {
+//     return res.status(401).json({ message: "No token, authorization denied" });
+//   }
+
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     // Support both { id } and { user: { id } }
+//     if (decoded.id) {
+//       req.user = { id: decoded.id };
+//     } else if (decoded.user && decoded.user.id) {
+//       req.user = decoded.user;
+//     } else {
+//       return res.status(401).json({ message: "Token is not valid" });
+//     }
+
+//     next();
+//   } catch (err) {
+//     return res.status(401).json({ message: "Token verification failed" });
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-module.exports = function (req, res, next) {
-  const token =
-    req.cookies.token ||
-    (req.headers.authorization && req.headers.authorization.split(" ")[1]);
-
-  if (!token) {
-    return res.status(401).json({ message: "No token, authorization denied" });
-  }
-
+module.exports = async function (req, res, next) {
   try {
+    // Get token from header
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) return res.status(401).json({ message: "No token, authorization denied" });
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Support both { id } and { user: { id } }
-    if (decoded.id) {
-      req.user = { id: decoded.id };
-    } else if (decoded.user && decoded.user.id) {
-      req.user = decoded.user;
-    } else {
-      return res.status(401).json({ message: "Token is not valid" });
-    }
-
+    req.user = decoded.user;
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Token verification failed" });
+    console.error(err);
+    res.status(401).json({ message: "Token is not valid" });
   }
 };
-
-
-
-
