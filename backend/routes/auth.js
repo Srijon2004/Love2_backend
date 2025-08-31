@@ -296,46 +296,118 @@ router.post("/logout", (req, res) => {
 
 
 
+// router.post("/google", async (req, res) => {
+//   const { email, name, photo, uid } = req.body;
+
+//   try {
+//     // Step 1: Check if user already exists by email
+//     let user = await User.findOne({ email });
+
+//     if (!user) {
+//       // Step 2: If not exists, create new
+//       user = new User({
+//         email,
+//         name,
+//         profilePhoto: photo,
+//         googleId: uid,
+//         authType: "google"
+//       });
+//       await user.save();
+//     } else {
+//       // Step 3: If exists, update with Google details (optional)
+//       if (!user.googleId) {
+//         user.googleId = uid;
+//         user.authType = "manual+google"; // mark linked account
+//         if (!user.profilePhoto) user.profilePhoto = photo;
+//         await user.save();
+//       }
+//     }
+
+//     // Step 4: Issue JWT
+//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: "7d"
+//     });
+
+//     res.cookie("token", token, { httpOnly: true });
+//     res.json({ success: true, user, token });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Google login / signup
 router.post("/google", async (req, res) => {
   const { email, name, photo, uid } = req.body;
 
   try {
-    // Step 1: Check if user already exists by email
+    // Step 1: Check if a user already exists by email
     let user = await User.findOne({ email });
 
-    if (!user) {
-      // Step 2: If not exists, create new
+    if (user) {
+      // Existing manual user found
+      // Step 2: Link Google info if not linked already
+      if (!user.googleId) {
+        user.googleId = uid;
+        user.authType = user.authType === "manual" ? "manual+google" : user.authType;
+        if (!user.profilePhoto) user.profilePhoto = photo;
+        await user.save();
+      }
+    } else {
+      // No existing user, create a new Google user
       user = new User({
         email,
-        name,
+        username: name,       // Assuming your User model uses 'username' field
         profilePhoto: photo,
         googleId: uid,
         authType: "google"
       });
       await user.save();
-    } else {
-      // Step 3: If exists, update with Google details (optional)
-      if (!user.googleId) {
-        user.googleId = uid;
-        user.authType = "manual+google"; // mark linked account
-        if (!user.profilePhoto) user.profilePhoto = photo;
-        await user.save();
-      }
     }
 
-    // Step 4: Issue JWT
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d"
+    // Step 3: Issue JWT with the correct user ID (merged or new)
+    const token = jwt.sign(
+      { user: { id: user._id, username: user.username, email: user.email } },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Step 4: Send token via cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,      // required if deployed on HTTPS
+      sameSite: "None",  // required if deployed on HTTPS
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
-    res.cookie("token", token, { httpOnly: true });
+    // Step 5: Send user data
     res.json({ success: true, user, token });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
 
 
 
