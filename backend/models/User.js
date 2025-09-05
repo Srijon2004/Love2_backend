@@ -50,6 +50,56 @@
 
 
 
+// const mongoose = require("mongoose");
+
+// const girlfriendSchema = new mongoose.Schema({
+//   name: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   photo: {
+//     type: String, // URL (Cloudinary, S3, etc.) or base64
+//     default: "",
+//   },
+//   details: {
+//     type: String,
+//     default: "",
+//   },
+//   createdAt: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+
+// const userSchema = new mongoose.Schema(
+//   {
+//     username: { type: String, required: true, trim: true },
+//     email: { type: String, required: true, unique: true, lowercase: true },
+//     password: { type: String }, // optional for Google login
+//     firebaseUID: { type: String, unique: true, sparse: true }, // store Firebase UID
+//     girlfriends: {
+//       type: [girlfriendSchema],
+//       default: [], // initially no girlfriend details
+//     },
+//   },
+//   { timestamps: true }
+// );
+
+// module.exports = mongoose.model("User", userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
 const mongoose = require("mongoose");
 
 const girlfriendSchema = new mongoose.Schema({
@@ -78,9 +128,11 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String }, // optional for Google login
     firebaseUID: { type: String, unique: true, sparse: true }, // store Firebase UID
+    profilePhoto: { type: String }, // To store the user's photo from Google
+    authType: { type: String, enum: ['manual', 'google', 'manual+google'], default: 'manual' }, // To track how the user signed up
     girlfriends: {
       type: [girlfriendSchema],
-      default: [], // initially no girlfriend details
+      default: [], 
     },
   },
   { timestamps: true }
