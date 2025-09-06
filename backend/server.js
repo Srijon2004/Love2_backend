@@ -150,7 +150,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
-
+// app.use("/uploads", express.static("uploads"));
 const allowedOrigins = [
   'http://localhost:5173',                 // Your local frontend for development
   'https://love-srijon.onrender.com',
