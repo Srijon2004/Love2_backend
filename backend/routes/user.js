@@ -634,8 +634,6 @@ const express = require("express");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
 
-
-
 const router = express.Router();
 
 // router.get("/my-proposals", auth, async (req, res) => {
@@ -669,9 +667,6 @@ router.get("/my-proposals", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
-
-
 
 
 
