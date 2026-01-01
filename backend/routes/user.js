@@ -787,6 +787,56 @@ router.put("/girlfriend/:girlfriendId", auth, async (req, res) => {
   }
 });
 
+
+
+
+
+
+// Add this to srijon2004/love2_backend/.../routes/user.js
+
+// Public route for girlfriend to send a response
+router.post("/respond/:username/:girlfriendId", async (req, res) => {
+  try {
+    const { username, girlfriendId } = req.params;
+    const { message } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const gf = user.girlfriends.id(girlfriendId);
+    if (!gf) return res.status(404).json({ message: "Proposal not found" });
+
+    // Update the proposal with her response
+    gf.responseMessage = message || "";
+    gf.status = "accepted";
+
+    await user.save();
+
+    res.json({ success: true, message: "Response sent to him! ❤️" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
 
 

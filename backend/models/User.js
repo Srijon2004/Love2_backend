@@ -102,25 +102,57 @@
 
 const mongoose = require("mongoose");
 
+// const girlfriendSchema = new mongoose.Schema({
+//   name: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   photo: {
+//     type: String, // URL (Cloudinary, S3, etc.) or base64
+//     default: "",
+//   },
+//   details: {
+//     type: String,
+//     default: "",
+//   },
+//   createdAt: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+
+
+
+
+
+
+
+
+
+
+// backend/models/User.js
 const girlfriendSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  photo: {
-    type: String, // URL (Cloudinary, S3, etc.) or base64
-    default: "",
-  },
-  details: {
-    type: String,
-    default: "",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  name: { type: String, required: true, trim: true },
+  photo: { type: String, default: "" },
+  details: { type: String, default: "" },
+  // ADD THESE TWO FIELDS
+  responseMessage: { type: String, default: "" },
+  status: { type: String, enum: ['pending', 'accepted'], default: 'pending' },
+  createdAt: { type: Date, default: Date.now },
 });
+
+
+
+
+
+
+
+
+
+
+
+
 
 const userSchema = new mongoose.Schema(
   {
