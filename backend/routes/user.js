@@ -633,7 +633,7 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
-
+const { upload } = require("../config/cloudinary");
 const router = express.Router();
 
 // router.get("/my-proposals", auth, async (req, res) => {
@@ -669,20 +669,65 @@ router.get("/my-proposals", auth, async (req, res) => {
 });
 
 
-
+// ===================++++++++++++++++++++++++++
 // Add a new girlfriend
-router.post("/girlfriend", auth, async (req, res) => {
+// router.post("/girlfriend", auth, async (req, res) => {
+//   try {
+//     const { name, photo, details } = req.body;
+//     if (!name) return res.status(400).json({ message: "Girlfriend name is required" });
+
+//     const user = await User.findById(req.user.id);
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     const newGirlfriend = { name, photo: photo || "", details: details || "" };
+//     user.girlfriends.push(newGirlfriend);
+//     await user.save();
+
+//     const addedGirlfriend = user.girlfriends[user.girlfriends.length - 1];
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Girlfriend link added successfully ✅",
+//       data: {
+//         username: user.username,
+//         girlfriend: addedGirlfriend,
+//       },
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// });
+
+
+
+
+
+
+
+
+// CHANGE THIS: Update the POST route for /girlfriend
+router.post("/girlfriend", auth, upload.single("photo"), async (req, res) => {
   try {
-    const { name, photo, details } = req.body;
+    const { name, details } = req.body;
     if (!name) return res.status(400).json({ message: "Girlfriend name is required" });
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const newGirlfriend = { name, photo: photo || "", details: details || "" };
+    // IMPORTANT: Use req.file.path to get the Cloudinary URL
+    const photoUrl = req.file ? req.file.path : ""; 
+
+    const newGirlfriend = { 
+      name, 
+      photo: photoUrl, // Save the Cloudinary URL here
+      details: details || "",
+      status: "pending" 
+    };
+    
     user.girlfriends.push(newGirlfriend);
     await user.save();
-
+    
     const addedGirlfriend = user.girlfriends[user.girlfriends.length - 1];
 
     res.status(201).json({
@@ -694,10 +739,24 @@ router.post("/girlfriend", auth, async (req, res) => {
       },
     });
   } catch (err) {
-    console.error(err);
+    console.error("Creation error:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Get a single girlfriend by ID (for unique link)
 router.get("/propose/:username/:girlfriendId", async (req, res) => {
