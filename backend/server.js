@@ -153,7 +153,7 @@ app.use(cookieParser());
 // app.use("/uploads", express.static("uploads"));
 const allowedOrigins = [
   'http://localhost:5173',                 // Your local frontend for development
-  'https://love-srijon.onrender.com',
+  'https://srijon-propose.onrender.com',
 ];
 
 app.use(cors({
