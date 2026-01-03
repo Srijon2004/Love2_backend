@@ -8,11 +8,23 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: "proposals", // all images stored in "proposals" folder in Cloudinary
+//     allowed_formats: ["jpg", "png", "jpeg"],
+//   },
+// });
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "proposals", // all images stored in "proposals" folder in Cloudinary
+    folder: "proposals",
     allowed_formats: ["jpg", "png", "jpeg"],
+    // ADD THESE TO MAKE IT FASTER:
+    transformation: [
+      { quality: "auto", fetch_format: "auto" } // Automatically compresses the image
+    ]
   },
 });
 
