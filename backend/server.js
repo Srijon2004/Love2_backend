@@ -135,11 +135,15 @@ const cookieParser = require("cookie-parser");
 const admin = require("firebase-admin");
 
 // Add your service account key
-const serviceAccount = require("./serviceAccountKey.json");
+// const serviceAccount = require("./serviceAccountKey.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
+// });
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
