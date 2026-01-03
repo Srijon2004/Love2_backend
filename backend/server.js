@@ -127,12 +127,17 @@
 
 
 
-require("dotenv").config();
+// require("dotenv").config();
+require("dotenv").config({ path: "./.env" });
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const admin = require("firebase-admin");
+const fs = require("fs");
+console.log("ENV FILE FOUND =", fs.existsSync("./.env"));
+console.log("MONGO CHECK =", process.env.MONGO_URI);
 
 // Add your service account key
 // const serviceAccount = require("./serviceAccountKey.json");
@@ -144,6 +149,29 @@ const admin = require("firebase-admin");
 // admin.initializeApp({
 //   credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
 // });
+
+// if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+//   console.error("❌ FIREBASE_SERVICE_ACCOUNT missing");
+//   process.exit(1);
+// }
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(
+//     JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+//   ),
+// });
+// console.log("ENV CHECK =", process.env.FIREBASE_SERVICE_ACCOUNT);
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+  console.error("❌ FIREBASE_SERVICE_ACCOUNT missing");
+  process.exit(1);
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(
+    JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+  ),
+});
+
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
